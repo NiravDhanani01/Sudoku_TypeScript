@@ -10,7 +10,7 @@ let gameScore = 0;
 let gameBoard = document.getElementById("gameBoard");
 let size = 9;
 let interval;
-let getPlayers = JSON.parse(localStorage.getItem("player"));
+let getPlayers = JSON.parse(localStorage.getItem("player") || "");
 let playerDate = document.querySelector(".playerData");
 playerDate.style.display = "none";
 const takePlayerInput = (event) => {
@@ -42,9 +42,10 @@ const takePlayerInput = (event) => {
     }
     else {
         for (let i = 0; i < getPlayers.length; i++) {
-            if (getPlayers[i].name == playerName) {
+            if (getPlayers[i].name == player) {
                 alert("Player name already exists");
-                document.querySelector(".playerData").style.display = "block";
+                const playerDate = document.querySelector(".playerData");
+                playerDate.style.display = "block";
                 existingPlayer();
                 return false;
             }
@@ -68,7 +69,8 @@ const existingPlayer = () => {
         localStorage.getItem("player") == undefined)
         alert("no data found");
     else {
-        let playerData = JSON.parse(localStorage.getItem("player")) || [];
+        let tableBody = document.getElementById("tbody");
+        let playerData = JSON.parse(localStorage.getItem("player") || "");
         let tbl = "";
         playerData.map((item, i) => {
             i++;
@@ -84,16 +86,18 @@ const existingPlayer = () => {
         </tr>
       `;
         });
-        document.querySelector(".playerData").style.display = "block";
-        document.getElementById("tbody").innerHTML = tbl;
+        let playerShowDisplay = document.querySelector(".playerData");
+        playerShowDisplay.style.display = "block";
+        tableBody.innerHTML = tbl;
     }
 };
 // select player from list or loading old game logic
 const selectPlayerAndStartGame = (id) => {
-    let playerData = JSON.parse(localStorage.getItem("player")) || [];
+    let playerData = JSON.parse(localStorage.getItem("player") || "");
     let selectedPlayer = playerData.find((item) => item.id == id);
     localStorage.setItem("oldPlayer", JSON.stringify(selectedPlayer));
-    document.querySelector(".playerData").style.display = "none";
+    let playerShowDisplay = document.querySelector(".playerData");
+    playerShowDisplay.style.display = "block";
     location.reload();
 };
 const deleteOldPlayer = (id) => {
@@ -106,8 +110,8 @@ const deleteOldPlayer = (id) => {
 };
 const setLevel = (newLevel) => {
     alert("your Current Data Will Be Lost !!!");
-    let selectedPlayer = JSON.parse(localStorage.getItem("oldPlayer")) || [];
-    let updateNewPlayer = JSON.parse(localStorage.getItem("player")) || [];
+    let selectedPlayer = JSON.parse(localStorage.getItem("oldPlayer") || "") || [];
+    let updateNewPlayer = JSON.parse(localStorage.getItem("player") || "") || [];
     let id = Math.floor(Math.random() * 100);
     let playerInfo = {
         id: id,
@@ -133,7 +137,7 @@ const hardLevel = () => setLevel("hard");
 //// now here start game , set name,score etc .
 const startGame = () => {
     gameBoard.innerHTML = "";
-    const oldData = JSON.parse(localStorage.getItem("oldPlayer"));
+    const oldData = JSON.parse(localStorage.getItem("oldPlayer") || "");
     if (oldData == undefined || oldData == null) {
         let levelBtn = document.querySelectorAll(".levelBtn");
         levelBtn.forEach((btn) => {
@@ -148,14 +152,16 @@ const startGame = () => {
         if (oldData.score > 0) {
             gameScore = oldData.score;
         }
-        score.innerHTML = gameScore;
+        score.innerText = gameScore.toString();
         level.innerHTML = oldData.level;
         displayBoard(oldData.level);
         bestScore(oldData.level, oldData.score);
-        document.getElementById("newGameBtn").setAttribute("disabled", "disabled");
-        document.getElementById("newGameBtn").style.backgroundColor = "#1384964b";
-        document.querySelector(".oldPlayer").style.backgroundColor = "#1384964b";
-        document.querySelector(".oldPlayer").setAttribute("disabled", "disabled");
+        const newGameBtn = document.getElementById("newGameBtn");
+        newGameBtn.setAttribute("disabled", "disabled");
+        newGameBtn.style.backgroundColor = "#1384964b";
+        const oldBtn = document.querySelector(".oldPlayer");
+        oldBtn.style.backgroundColor = "#1384964b";
+        oldBtn.setAttribute("disabled", "disabled");
     }
 };
 // logout or exit game
@@ -166,7 +172,7 @@ const exitFromGame = () => {
 };
 // set timer functionality
 const setTimer = () => {
-    const oldData = JSON.parse(localStorage.getItem("oldPlayer"));
+    const oldData = JSON.parse(localStorage.getItem("oldPlayer") || "");
     let time;
     let minute = 0;
     let second = 0;
@@ -227,7 +233,7 @@ const displayBoard = (level) => {
         }
     }
     createEmptyBox();
-    let getOldData = JSON.parse(localStorage.getItem("oldPlayer"));
+    let getOldData = JSON.parse(localStorage.getItem("oldPlayer") || "[]");
     if (getOldData && getOldData.gameBoard != null) {
         let gridCount = 0;
         for (let i = 0; i < size; i++) {
@@ -241,6 +247,7 @@ const displayBoard = (level) => {
         if (getOldData.scoreUpdateChecking) {
             scoreUpdateChecking = getOldData.scoreUpdateChecking;
         }
+        //@ts-ignore
         removeSpace();
         setTimer();
     }
@@ -283,7 +290,7 @@ const displayBoard = (level) => {
                             }
                             if (row && col && matrix) {
                                 boxArray[i][j] = num;
-                                div.innerHTML = boxArray[i][j];
+                                div.innerHTML = num.toString();
                                 if (fillBox()) {
                                     return true;
                                 }
@@ -310,9 +317,8 @@ const displayBoard = (level) => {
         setTimer();
     }
 };
-// remove box value from sudoku
 const removeSpace = (num) => {
-    const oldData = JSON.parse(localStorage.getItem("oldPlayer"));
+    const oldData = JSON.parse(localStorage.getItem("oldPlayer") || "");
     if (oldData.space) {
         removeSpaceArray = oldData.space;
     }
@@ -320,9 +326,9 @@ const removeSpace = (num) => {
         for (let i = 0; i < num; i++) {
             let x = Math.floor(Math.random() * 9);
             let y = Math.floor(Math.random() * 9);
-            // document.getElementById(`${x}-${y}`).style.backgroundColor =
+            let id = document.getElementById(`${x}-${y}`);
             //   "rgba(176, 219, 253, 0.217)";
-            document.getElementById(`${x}-${y}`).innerHTML = "";
+            id.innerHTML = "";
             if (removeSpaceArray.includes(`${x}-${y}`)) {
                 i--;
             }
@@ -334,8 +340,8 @@ const removeSpace = (num) => {
     for (let i = 0; i < 9; i++) {
         for (let j = 0; j < 9; j++) {
             if (!removeSpaceArray.includes(`${i}-${j}`)) {
-                document.getElementById(`${i}-${j}`).style.backgroundColor =
-                    "rgba(208, 234, 255, 0.435)";
+                let id = document.getElementById(`${i}-${j}`);
+                id.style.backgroundColor = "rgba(208, 234, 255, 0.435)";
             }
         }
     }
@@ -362,12 +368,10 @@ const setNumberInTargetBox = () => document.addEventListener("keyup", (e) => {
         if (!targetBox)
             return;
         let keyValue = e.key;
-        if (typeof keyValue === "number") {
-            if (keyValue >= 1 && keyValue <= 9) {
-                targetBox.innerText = keyValue;
-                checkInputValue(targetBox);
-                saveSteps();
-            }
+        if (keyValue >= "1" && keyValue <= "9") {
+            targetBox.innerText = keyValue;
+            checkInputValue(targetBox);
+            saveSteps();
         }
         else if (keyValue == "Backspace") {
             targetBox.innerText = "";
@@ -379,8 +383,7 @@ const setNumberInTargetBox = () => document.addEventListener("keyup", (e) => {
     }
 });
 // erase Selected box
-const eraseSelectedNumber = () => let, earseBtn = document.getElementById("eraseBtn");
-earseBtn.addEventListener("click", () => {
+const eraseSelectedNumber = () => document.getElementById("eraseBtn").addEventListener("click", () => {
     if (removeSpaceArray.includes(targetBox.id)) {
         if (!targetBox)
             return;
@@ -413,7 +416,7 @@ function checkInputValue(targetBox) {
         for (let i = targetRowNumber; i <= targetRowNumber; i++) {
             for (let j = 0; j < 9; j++) {
                 let div = document.getElementById(`${i}-${j}`);
-                if (div.innerText == boxArray[i][j])
+                if (+div.innerText == boxArray[i][j])
                     rowCountCheck += 1;
             }
         }
@@ -422,7 +425,7 @@ function checkInputValue(targetBox) {
         for (let i = 0; i < 9; i++) {
             for (let j = targetColNumber; j <= targetColNumber; j++) {
                 let div = document.getElementById(`${i}-${j}`);
-                if (div.innerText == boxArray[i][j])
+                if (+div.innerText == boxArray[i][j])
                     colCountCheck += 1;
             }
         }
@@ -433,13 +436,14 @@ function checkInputValue(targetBox) {
         for (let i = matrixRow; i < matrixRow + 3; i++) {
             for (let j = matrixCol; j < matrixCol + 3; j++) {
                 let div = document.getElementById(`${i}-${j}`);
-                if (div.innerText == boxArray[i][j])
+                if (+div.innerText == boxArray[i][j])
                     matrixCountCheck++;
             }
         }
         // check the  score update
         if (scoreUpdate) {
-            let level = document.getElementById("level").innerHTML;
+            let gameLevel = document.getElementById("level");
+            let level = gameLevel.innerHTML;
             if (level == "easy") {
                 gameScore += 10;
             }
@@ -509,18 +513,18 @@ function checkInputValue(targetBox) {
             scoreUpdate = false;
         }
     }
-    score.innerText = gameScore;
+    score.innerText = gameScore.toString();
     storeDataIntoLocalStorage();
 }
 const storeDataIntoLocalStorage = () => {
     let storeGameBoard = [];
-    let playerData = JSON.parse(localStorage.getItem("player"));
-    let oldPlayerData = JSON.parse(localStorage.getItem("oldPlayer"));
+    let playerData = JSON.parse(localStorage.getItem("player") || "");
+    let oldPlayerData = JSON.parse(localStorage.getItem("oldPlayer") || "");
     for (let i = 0; i < size; i++) {
         for (let j = 0; j < size; j++) {
-            div = document.getElementById(`${i}-${j}`);
+            let div = document.getElementById(`${i}-${j}`);
             div.innerHTML;
-            obj = {
+            let obj = {
                 id: div.id,
                 value: div.innerHTML,
             };
@@ -552,7 +556,7 @@ const winningPattern = () => {
     for (let i = 0; i < size; i++) {
         for (let j = 0; j < size; j++) {
             let div = document.getElementById(`${i}-${j}`);
-            if (div.innerHTML != boxArray[i][j]) {
+            if (+div.innerHTML != boxArray[i][j]) {
                 return false;
             }
         }
@@ -561,7 +565,7 @@ const winningPattern = () => {
         alert("You Win!");
         storeDataIntoLocalStorage();
         clearInterval(interval);
-        gameBoard = "";
+        gameBoard.innerHTML = "";
         removeSpaceArray = [];
         exitFromGame();
         alert("want to start new game!!!");
@@ -585,7 +589,8 @@ const bestScore = (playerLevel, playerScore) => {
 };
 // undo game logic
 let recordAllStep = [];
-document.getElementById("undoBtn").addEventListener("click", undoFunctionality);
+let undoBtn = document.getElementById("undoBtn");
+undoBtn.addEventListener("click", undoFunctionality);
 function saveSteps() {
     document.removeEventListener("click", selectEmptyBox);
     document.removeEventListener("keyup", setNumberInTargetBox);
@@ -602,20 +607,20 @@ function undoFunctionality() {
     }
     recordAllStep.pop();
     recordAllStep.forEach((item) => {
-        document.getElementById(item.id).innerHTML = item.value;
+        let itemID = document.getElementById(`${item.id}`);
+        itemID.innerHTML = item.value;
     });
     console.log(recordAllStep);
 }
 const resetGame = () => {
-    let oldData = JSON.parse(localStorage.getItem("oldPlayer"));
+    let oldData = JSON.parse(localStorage.getItem("oldPlayer") || "");
     setLevel(oldData.level);
 };
-bestScore();
 startGame();
 for (let i = 0; i < size; i++) {
     for (let j = 0; j < size; j++) {
         let div = document.getElementById(`${i}-${j}`);
-        if (div.innerHTML != boxArray[i][j]) {
+        if (+div.innerHTML != boxArray[i][j]) {
             div.style.color = "red";
         }
     }

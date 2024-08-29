@@ -1,22 +1,23 @@
-let players: (string | number)[] = [];
+let players: { id: number; name: string; level: string }[] = [];
 let idArray: (string | number)[] = [];
 let removeSpaceArray: (string | number)[] = [];
-let playerName = document.getElementById("player") as HTMLElement | null;
-let score = document.getElementById("score") as HTMLElement | null;
-let level = document.getElementById("level") as HTMLElement | null;
-let gameTime = document.getElementById("time") as HTMLElement | null;
+let playerName = document.getElementById("player")!;
+let score = document.getElementById("score")!;
+let level = document.getElementById("level")!;
+let gameTime = document.getElementById("time")!;
 let gameScore: number = 0;
-let gameBoard = document.getElementById("gameBoard") as HTMLElement | null;
+let gameBoard = document.getElementById("gameBoard")!;
 let size: number = 9;
 let interval: number;
-let getPlayers: (string | null | number)[] = JSON.parse(
-  localStorage.getItem("player")
+let getPlayers: { id: number; name: string; level: string }[] = JSON.parse(
+  localStorage.getItem("player") || ""
 );
 let playerDate = document.querySelector(".playerData") as HTMLElement;
 playerDate.style.display = "none";
 
 // first set up for player name
 type playerInput = (event: any) => void;
+
 const takePlayerInput: playerInput = (event) => {
   event.preventDefault();
   const playerName = document.getElementById(
@@ -53,9 +54,10 @@ const takePlayerInput: playerInput = (event) => {
     location.reload();
   } else {
     for (let i = 0; i < getPlayers.length; i++) {
-      if (getPlayers[i].name == playerName) {
+      if (getPlayers[i].name == player) {
         alert("Player name already exists");
-        document.querySelector(".playerData").style.display = "block";
+        const playerDate = document.querySelector(".playerData") as HTMLElement;
+        playerDate.style.display = "block";
         existingPlayer();
         return false;
       } else {
@@ -75,16 +77,19 @@ const takePlayerInput: playerInput = (event) => {
 };
 
 // if player exist
-const existingPlayer = () => {
+const existingPlayer = (): void => {
   if (
     localStorage.getItem("player") == null ||
     localStorage.getItem("player") == undefined
   )
     alert("no data found");
   else {
-    let playerData: any = JSON.parse(localStorage.getItem("player")) || [];
+    let tableBody = document.getElementById("tbody") as HTMLElement;
+    let playerData: (string | number | null)[] = JSON.parse(
+      localStorage.getItem("player") || ""
+    );
     let tbl = "";
-    playerData.map((item: any, i: number) => {
+    playerData.map((item: any, i: number): void => {
       i++;
       tbl += `
         <tr>
@@ -98,21 +103,27 @@ const existingPlayer = () => {
         </tr>
       `;
     });
-    document.querySelector(".playerData").style.display = "block";
-    document.getElementById("tbody").innerHTML = tbl;
+    let playerShowDisplay = document.querySelector(
+      ".playerData"
+    ) as HTMLElement;
+    playerShowDisplay.style.display = "block";
+    tableBody.innerHTML = tbl;
   }
 };
 
 // select player from list or loading old game logic
-const selectPlayerAndStartGame = (id: number) => {
-  let playerData = JSON.parse(localStorage.getItem("player")) || [];
-  let selectedPlayer = playerData.find((item: any) => item.id == id);
+const selectPlayerAndStartGame = (id: number): void => {
+  let playerData = JSON.parse(localStorage.getItem("player") || "");
+  let selectedPlayer: string | number = playerData.find(
+    (item: any) => item.id == id
+  );
   localStorage.setItem("oldPlayer", JSON.stringify(selectedPlayer));
-  document.querySelector(".playerData").style.display = "none";
+  let playerShowDisplay = document.querySelector(".playerData") as HTMLElement;
+  playerShowDisplay.style.display = "block";
   location.reload();
 };
 
-const deleteOldPlayer = (id: number) => {
+const deleteOldPlayer = (id: number): void => {
   let deletePlayer = getPlayers.filter((item: any) => item.id != id);
   localStorage.setItem("player", JSON.stringify(deletePlayer));
 
@@ -122,10 +133,11 @@ const deleteOldPlayer = (id: number) => {
   location.reload();
 };
 
-const setLevel = (newLevel: string) => {
+const setLevel = (newLevel: string): void => {
   alert("your Current Data Will Be Lost !!!");
-  let selectedPlayer = JSON.parse(localStorage.getItem("oldPlayer")) || [];
-  let updateNewPlayer = JSON.parse(localStorage.getItem("player")) || [];
+  let selectedPlayer =
+    JSON.parse(localStorage.getItem("oldPlayer") || "") || [];
+  let updateNewPlayer = JSON.parse(localStorage.getItem("player") || "") || [];
   let id = Math.floor(Math.random() * 100);
 
   let playerInfo = {
@@ -140,7 +152,6 @@ const setLevel = (newLevel: string) => {
     }
   });
   localStorage.removeItem("oldPlayer");
-
   location.reload();
   localStorage.setItem("oldPlayer", JSON.stringify(playerInfo));
   localStorage.setItem("player", JSON.stringify(updateNewPlayer));
@@ -149,17 +160,17 @@ const setLevel = (newLevel: string) => {
   gameScore = 0;
 };
 
-const easyLevel = () => setLevel("easy");
-const mediumLevel = () => setLevel("medium");
-const hardLevel = () => setLevel("hard");
+const easyLevel = (): void => setLevel("easy");
+const mediumLevel = (): void => setLevel("medium");
+const hardLevel = (): void => setLevel("hard");
 
 //// now here start game , set name,score etc .
-const startGame = () => {
+const startGame = (): void => {
   gameBoard.innerHTML = "";
-  const oldData = JSON.parse(localStorage.getItem("oldPlayer"));
+  const oldData: any = JSON.parse(localStorage.getItem("oldPlayer") || "");
   if (oldData == undefined || oldData == null) {
     let levelBtn = document.querySelectorAll(".levelBtn");
-    levelBtn.forEach((btn) => {
+    levelBtn.forEach((btn: any): void => {
       btn.setAttribute("disabled", "disabled");
       btn.style.backgroundColor = "#1384964b";
       gameBoard.innerHTML = "";
@@ -170,15 +181,18 @@ const startGame = () => {
     if (oldData.score > 0) {
       gameScore = oldData.score;
     }
-    score.innerHTML = gameScore;
+
+    score.innerText = gameScore.toString();
     level.innerHTML = oldData.level;
     displayBoard(oldData.level);
     bestScore(oldData.level, oldData.score);
-    document.getElementById("newGameBtn").setAttribute("disabled", "disabled");
-    document.getElementById("newGameBtn").style.backgroundColor = "#1384964b";
+    const newGameBtn = document.getElementById("newGameBtn") as HTMLElement;
+    newGameBtn.setAttribute("disabled", "disabled");
+    newGameBtn.style.backgroundColor = "#1384964b";
 
-    document.querySelector(".oldPlayer").style.backgroundColor = "#1384964b";
-    document.querySelector(".oldPlayer").setAttribute("disabled", "disabled");
+    const oldBtn = document.querySelector(".oldPlayer") as HTMLElement;
+    oldBtn.style.backgroundColor = "#1384964b";
+    oldBtn.setAttribute("disabled", "disabled");
   }
 };
 
@@ -191,7 +205,7 @@ const exitFromGame = (): void => {
 
 // set timer functionality
 const setTimer = (): void => {
-  const oldData = JSON.parse(localStorage.getItem("oldPlayer"));
+  const oldData = JSON.parse(localStorage.getItem("oldPlayer") || "");
   let time: string;
   let minute: number = 0;
   let second: number = 0;
@@ -238,11 +252,11 @@ let boxArray: number[][] = [
 ];
 
 // setup sudoku grid and numbers
-const displayBoard = (level: string): void => {
+const displayBoard = (level:string):void => {
   // // create empty sudoku box
-  function createEmptyBox() {
-    for (let i = 0; i < size; i++) {
-      for (let j = 0; j < size; j++) {
+  function createEmptyBox():void {
+    for (let i:number = 0; i < size; i++) {
+      for (let j:number = 0; j < size; j++) {
         let div = document.createElement("div");
         div.className = "gameBox";
         div.id = `${i}-${j}`;
@@ -259,14 +273,15 @@ const displayBoard = (level: string): void => {
     }
   }
   createEmptyBox();
-  let getOldData = JSON.parse(localStorage.getItem("oldPlayer"));
+  let getOldData = JSON.parse(localStorage.getItem("oldPlayer")  || "[]");
+
 
   if (getOldData && getOldData.gameBoard != null) {
-    let gridCount: number = 0;
+    let gridCount = 0;
 
     for (let i = 0; i < size; i++) {
       for (let j = 0; j < size; j++) {
-        let box = document.getElementById(`${i}-${j}`) as HTMLDivElement;
+        let box = document.getElementById(`${i}-${j}`)!;
         box.innerHTML = getOldData.gameBoard[gridCount].value;
         boxArray[i][j] = getOldData.boxArray[i][j];
         gridCount++;
@@ -275,16 +290,16 @@ const displayBoard = (level: string): void => {
     if (getOldData.scoreUpdateChecking) {
       scoreUpdateChecking = getOldData.scoreUpdateChecking;
     }
-
+//@ts-ignore
     removeSpace();
     setTimer();
   } else {
     function fillBox() {
       for (let i = 0; i < size; i++) {
         for (let j = 0; j < size; j++) {
-          let div = document.getElementById(`${i}-${j}`);
+          let div = document.getElementById(`${i}-${j}`)!;
           if (boxArray[i][j] == 0) {
-            let number = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+            let number:number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
             number.sort(() => Math.random() - 0.5);
 
             for (let num of number) {
@@ -321,7 +336,7 @@ const displayBoard = (level: string): void => {
 
               if (row && col && matrix) {
                 boxArray[i][j] = num;
-                div.innerHTML = boxArray[i][j];
+                div.innerHTML = num.toString();
                 if (fillBox()) {
                   return true;
                 }
@@ -348,9 +363,8 @@ const displayBoard = (level: string): void => {
   }
 };
 
-// remove box value from sudoku
 const removeSpace = (num: number): void => {
-  const oldData = JSON.parse(localStorage.getItem("oldPlayer"));
+  const oldData = JSON.parse(localStorage.getItem("oldPlayer") || "");
 
   if (oldData.space) {
     removeSpaceArray = oldData.space;
@@ -358,9 +372,9 @@ const removeSpace = (num: number): void => {
     for (let i = 0; i < num; i++) {
       let x = Math.floor(Math.random() * 9);
       let y = Math.floor(Math.random() * 9);
-      // document.getElementById(`${x}-${y}`).style.backgroundColor =
+      let id = document.getElementById(`${x}-${y}`)!;
       //   "rgba(176, 219, 253, 0.217)";
-      document.getElementById(`${x}-${y}`).innerHTML = "";
+      id.innerHTML = "";
       if (removeSpaceArray.includes(`${x}-${y}`)) {
         i--;
       } else {
@@ -368,11 +382,11 @@ const removeSpace = (num: number): void => {
       }
     }
   }
-  for (let i = 0; i < 9; i++) {
-    for (let j = 0; j < 9; j++) {
+  for (let i: number = 0; i < 9; i++) {
+    for (let j: number = 0; j < 9; j++) {
       if (!removeSpaceArray.includes(`${i}-${j}`)) {
-        document.getElementById(`${i}-${j}`).style.backgroundColor =
-          "rgba(208, 234, 255, 0.435)";
+        let id = document.getElementById(`${i}-${j}`) as HTMLElement;
+        id.style.backgroundColor = "rgba(208, 234, 255, 0.435)";
       }
     }
   }
@@ -397,17 +411,15 @@ function selectEmptyBox(e: any) {
   }
 }
 
-const setNumberInTargetBox = ():void =>
-  document.addEventListener("keyup", (e: KeyboardEvent) => {
+const setNumberInTargetBox = () =>
+  document.addEventListener("keyup", (e) => {
     if (removeSpaceArray.includes(targetBox.id)) {
       if (!targetBox) return;
-      let keyValue: string | number = e.key;
-      if (typeof keyValue === "number") {
-        if (keyValue >= 1 && keyValue <= 9) {
-          targetBox.innerText = keyValue;
-          checkInputValue(targetBox);
-          saveSteps();
-        }
+      let keyValue: string = e.key;
+      if (keyValue >= "1" && keyValue <= "9") {
+        targetBox.innerText = keyValue;
+        checkInputValue(targetBox);
+        saveSteps();
       } else if (keyValue == "Backspace") {
         targetBox.innerText = "";
         checkInputValue(targetBox);
@@ -419,9 +431,8 @@ const setNumberInTargetBox = ():void =>
   });
 
 // erase Selected box
-const eraseSelectedNumber = ():void =>
-  let  earseBtn = document.getElementById("eraseBtn") 
-earseBtn.addEventListener("click", () => {
+const eraseSelectedNumber = (): void =>
+  document.getElementById("eraseBtn")!.addEventListener("click", () => {
     if (removeSpaceArray.includes(targetBox.id)) {
       if (!targetBox) return;
       let eraseValue = "";
@@ -453,11 +464,11 @@ function checkInputValue(targetBox: any) {
     let targetColNumber = targetBox.id.split("-")[1];
 
     // check row wise is full or not
-    let rowCountCheck = 0;
+    let rowCountCheck: number = 0;
     for (let i = targetRowNumber; i <= targetRowNumber; i++) {
       for (let j = 0; j < 9; j++) {
-        let div = document.getElementById(`${i}-${j}`);
-        if (div.innerText == boxArray[i][j]) rowCountCheck += 1;
+        let div = document.getElementById(`${i}-${j}`)!;
+        if (+div.innerText == boxArray[i][j]) rowCountCheck += 1;
       }
     }
 
@@ -465,8 +476,8 @@ function checkInputValue(targetBox: any) {
     let colCountCheck = 0;
     for (let i = 0; i < 9; i++) {
       for (let j = targetColNumber; j <= targetColNumber; j++) {
-        let div = document.getElementById(`${i}-${j}`);
-        if (div.innerText == boxArray[i][j]) colCountCheck += 1;
+        let div = document.getElementById(`${i}-${j}`)!;
+        if (+div.innerText == boxArray[i][j]) colCountCheck += 1;
       }
     }
 
@@ -477,15 +488,15 @@ function checkInputValue(targetBox: any) {
 
     for (let i = matrixRow; i < matrixRow + 3; i++) {
       for (let j = matrixCol; j < matrixCol + 3; j++) {
-        let div = document.getElementById(`${i}-${j}`);
-        if (div.innerText == boxArray[i][j]) matrixCountCheck++;
+        let div = document.getElementById(`${i}-${j}`)!;
+        if (+div.innerText == boxArray[i][j]) matrixCountCheck++;
       }
     }
 
     // check the  score update
     if (scoreUpdate) {
-      let level = document.getElementById("level").innerHTML;
-
+      let gameLevel = document.getElementById("level")!;
+      let level = gameLevel.innerHTML;
       if (level == "easy") {
         gameScore += 10;
       } else if (level == "medium") {
@@ -548,19 +559,20 @@ function checkInputValue(targetBox: any) {
       scoreUpdate = false;
     }
   }
-  score.innerText = gameScore;
+
+  score.innerText = gameScore.toString();
   storeDataIntoLocalStorage();
 }
 
 const storeDataIntoLocalStorage = () => {
   let storeGameBoard = [];
-  let playerData = JSON.parse(localStorage.getItem("player"));
-  let oldPlayerData = JSON.parse(localStorage.getItem("oldPlayer"));
+  let playerData = JSON.parse(localStorage.getItem("player") || "");
+  let oldPlayerData = JSON.parse(localStorage.getItem("oldPlayer") || "");
   for (let i = 0; i < size; i++) {
     for (let j = 0; j < size; j++) {
-      div = document.getElementById(`${i}-${j}`);
+      let div = document.getElementById(`${i}-${j}`)!;
       div.innerHTML;
-      obj = {
+      let obj = {
         id: div.id,
         value: div.innerHTML,
       };
@@ -568,7 +580,7 @@ const storeDataIntoLocalStorage = () => {
     }
   }
 
-  playerData.find((item) => {
+  playerData.find((item: any) => {
     if (item.id == oldPlayerData.id) {
       item.score = gameScore;
       item.time = gameTime.innerHTML;
@@ -593,8 +605,8 @@ const storeDataIntoLocalStorage = () => {
 const winningPattern = () => {
   for (let i = 0; i < size; i++) {
     for (let j = 0; j < size; j++) {
-      let div = document.getElementById(`${i}-${j}`);
-      if (div.innerHTML != boxArray[i][j]) {
+      let div = document.getElementById(`${i}-${j}`)!;
+      if (+div.innerHTML != boxArray[i][j]) {
         return false;
       }
     }
@@ -604,7 +616,7 @@ const winningPattern = () => {
     alert("You Win!");
     storeDataIntoLocalStorage();
     clearInterval(interval);
-    gameBoard = "";
+    gameBoard.innerHTML = "";
     removeSpaceArray = [];
     exitFromGame();
     alert("want to start new game!!!");
@@ -612,33 +624,34 @@ const winningPattern = () => {
   }, 1500);
 };
 
-const bestScore = (playerLevel, playerScore) => {
-  const bestScore = document.getElementById("bestScore");
+const bestScore = (playerLevel: string, playerScore: number): void => {
+  const bestScore = document.getElementById("bestScore") as HTMLElement;
   let bestPlayerData = getPlayers;
 
-  let highScore = bestPlayerData.filter((level) => {
+  let highScore = bestPlayerData.filter((level: any) => {
     if (level.level == playerLevel) {
       return level;
     }
   });
 
-  let selectedLevelAllPlayerScore = [];
-  highScore.forEach((item) => {
+  let selectedLevelAllPlayerScore: string[] = [];
+  highScore.forEach((item: any) => {
     selectedLevelAllPlayerScore.push(item.score);
   });
 
   let bestPlayer = selectedLevelAllPlayerScore.reduce(
-    (a, b) => (a > b ? a : b),
+    (a: any, b: any) => (a > b ? a : b),
     0
   );
   bestScore.innerHTML = bestPlayer == undefined ? "00" : bestPlayer;
 };
 
 // undo game logic
-let recordAllStep = [];
-document.getElementById("undoBtn").addEventListener("click", undoFunctionality);
+let recordAllStep: { id: string; value: string }[] = [];
+let undoBtn = document.getElementById("undoBtn") as HTMLElement;
+undoBtn.addEventListener("click", undoFunctionality);
 
-function saveSteps() {
+function saveSteps(): void {
   document.removeEventListener("click", selectEmptyBox);
   document.removeEventListener("keyup", setNumberInTargetBox);
   let obj = {
@@ -655,22 +668,23 @@ function undoFunctionality() {
   }
   recordAllStep.pop();
   recordAllStep.forEach((item) => {
-    document.getElementById(item.id).innerHTML = item.value;
+    let itemID = document.getElementById(`${item.id}`)!;
+    itemID.innerHTML = item.value;
   });
   console.log(recordAllStep);
 }
 
-const resetGame = () => {
-  let oldData = JSON.parse(localStorage.getItem("oldPlayer"));
+const resetGame = (): void => {
+  let oldData = JSON.parse(localStorage.getItem("oldPlayer") || "");
   setLevel(oldData.level);
 };
 
-bestScore();
 startGame();
 for (let i = 0; i < size; i++) {
   for (let j = 0; j < size; j++) {
-    let div = document.getElementById(`${i}-${j}`);
-    if (div.innerHTML != boxArray[i][j]) {
+    let div = document.getElementById(`${i}-${j}`) as HTMLElement;
+
+    if (+div.innerHTML != boxArray[i][j]) {
       div.style.color = "red";
     }
   }
