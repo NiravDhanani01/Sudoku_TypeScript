@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sudoku Game</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="d-flex justify-center">
+        <div>
+          <div class="mtb">
+            <h1 class="text-center">Play Sudoku</h1>
+          </div>
+
+          <!-- form for take input player name and game difficulties  -->
+          <form action="" onsubmit="takePlayerInput(event)">
+            <div class="form-control mtb">
+              <label for="">Enter Player Name : </label>
+              <input placeholder="Enter Name" id="inputPlayerName" />
+            </div>
+            <div class="form-control mtb">
+              <label>Select Game Level :</label>
+              <select name="" id="gameLevelSelect">
+                <option value="">--select--</option>
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+              </select>
+            </div>
+
+            <div class="form-btn mtb d-flex justify-center">
+              <button type="submit" class="newPlayer" id="newGameBtn">Start New Game</button>
+            </div>
+          </form>
+          <!-- form end  -->
+          <div class="form-btn mtb d-flex justify-center">
+            <button class="oldPlayer" onclick="existingPlayer()">
+              Existing Players
+            </button>
+          </div>
+        </div>
+        <div>
+          <div class="playerData">
+            <table border="1" cellpadding="10px">
+              <thead>
+                <th>No</th>
+                <th>Name</th>
+                <th>Level</th>
+                <th>Select</th>
+              </thead>
+              <tbody id="tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="d-flex header">
+        <h1 class="gameTitle">Sudoku</h1>
+        <p class="playerName align-center">
+          Player : <span id="player"> </span>
+        </p>
+        <p class="playerScore align-center">
+          Score : <span id="score">0</span>
+        </p>
+        <p class="gamelevel align-center">
+          Difficulty : <span id="level">--</span>
+        </p>
+        <div class="d-flex">
+          <p class="align-center">Change Level :</p>
+          <button onclick="easyLevel()" id="easy" class="levelBtn">Easy</button>
+          <button onclick="mediumLevel()" id="medium" class="levelBtn">
+            Medium
+          </button>
+          <button onclick="hardLevel()" id="hard" class="levelBtn">Hard</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="d-flex justify-center">
+        <div class="d-flex justify-center">
+          <button class="levelBtn" id="eraseBtn">Erase</button>
+          <button class="levelBtn" id="undoBtn" onclick="">Undo</button>
+        </div>
+        <div class="d-flex justify-center">
+          <p class="align-center">Best Score :<h2 class="align-center" id="playername"></h2> <h2 class="align-center" id="bestScore">00</h2> </p>
+        </div>
+      </div>
+
+      <div class="game-body">
+        <div class="game-board" id="gameBoard"></div>
+      </div>
+      <div class="d-flex justify-center">
+        <div class="game-number d-flex justify-center" id="correctNumber"></div>
+      </div>
+      <div class="timer d-flex justify-center">
+        <p>Time : <span id="time"></span></p>
+      </div>
+      <div class="d-flex justify-center">
+        <button class="levelBtn" id="exitBtn" onclick="exitFromGame()">
+          Exit
+        </button>
+        <button class="levelBtn" id="resetBtn" onclick="resetGame()">
+          New Game
+        </button>
+      </div>
+    </div>
+  </body>
+
+  <script src="./app.js"></script>
+</html>
