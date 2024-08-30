@@ -252,11 +252,11 @@ let boxArray: number[][] = [
 ];
 
 // setup sudoku grid and numbers
-const displayBoard = (level:string):void => {
+const displayBoard = (level: string): void => {
   // // create empty sudoku box
-  function createEmptyBox():void {
-    for (let i:number = 0; i < size; i++) {
-      for (let j:number = 0; j < size; j++) {
+  function createEmptyBox(): void {
+    for (let i: number = 0; i < size; i++) {
+      for (let j: number = 0; j < size; j++) {
         let div = document.createElement("div");
         div.className = "gameBox";
         div.id = `${i}-${j}`;
@@ -273,8 +273,7 @@ const displayBoard = (level:string):void => {
     }
   }
   createEmptyBox();
-  let getOldData = JSON.parse(localStorage.getItem("oldPlayer")  || "[]");
-
+  let getOldData = JSON.parse(localStorage.getItem("oldPlayer") || "[]");
 
   if (getOldData && getOldData.gameBoard != null) {
     let gridCount = 0;
@@ -290,7 +289,7 @@ const displayBoard = (level:string):void => {
     if (getOldData.scoreUpdateChecking) {
       scoreUpdateChecking = getOldData.scoreUpdateChecking;
     }
-//@ts-ignore
+    //@ts-ignore
     removeSpace();
     setTimer();
   } else {
@@ -299,7 +298,7 @@ const displayBoard = (level:string):void => {
         for (let j = 0; j < size; j++) {
           let div = document.getElementById(`${i}-${j}`)!;
           if (boxArray[i][j] == 0) {
-            let number:number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+            let number: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
             number.sort(() => Math.random() - 0.5);
 
             for (let num of number) {
