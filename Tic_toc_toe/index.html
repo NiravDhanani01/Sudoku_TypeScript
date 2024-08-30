@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Toc Toe</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <div class="d-flex justify-center align-center mainbox">
+        <div class="gameZone d-flex justify-center flex-wrap align-center">
+            <div>
+                <h1>Tic Tac Toe Game</h1>
+               <div class="d-flex justify-between"> <p> Player 1 :<span id="selectPlayer"></span></p>
+                <p> Player 2 :<span id="selectPlayer2"></span></p></div>
+                <div class="d-flex">
+                    <p id="player">Select Player X</p> 
+                    <input type="radio" value="X" name="name" id="valX">
+                </div>
+            </div>
+
+            <div class="d-flex justify-center flex-wrap">
+                <button id="box" class="boxs"></button>
+                <button id="box" class="boxs"></button>
+                <button id="box" class="boxs"></button>
+                <button id="box" class="boxs"></button>
+                <button id="box" class="boxs"></button>
+                <button id="box" class="boxs"></button>
+                <button id="box" class="boxs"></button>
+                <button id="box" class="boxs"></button>
+                <button id="box" class="boxs"></button>
+            </div>
+            <div>
+                <p class="result text-center"></p>
+
+                <button class="reset" onclick="resetGame()">Reset</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="./index.js"></script>
+
+</html>
