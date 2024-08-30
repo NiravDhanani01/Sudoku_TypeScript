@@ -1,98 +1,87 @@
 "use strict";
-let mineArea = document.querySelector(".minesArea");
-let unopenedCells;
-let boxes = [];
-const displayMineArea = (col, row) => {
+var mineArea = document.querySelector(".minesArea");
+var unopenedCells;
+var boxes = [];
+var displayMineArea = function (col, row) {
     mineArea.innerHTML = "";
     boxes = [];
     unopenedCells = col * row;
     mineArea.style.width = col * 35 + "px";
-    for (let i = 0; i < row; i++) {
-        let rowArr = [];
-        for (let j = 0; j < col; j++) {
-            let div = document.createElement("div");
+    for (var i = 0; i < row; i++) {
+        var rowArr = [];
+        for (var j = 0; j < col; j++) {
+            var div = document.createElement("div");
             div.className = "mineBtn";
-            div.setAttribute("onclick", `openPosition(event, ${row}, ${col})`);
-            div.id = `${i}-${j}`;
-            rowArr.push(`${i}-${j}`);
+            div.setAttribute("onclick", "openPosition(event, ".concat(row, ", ").concat(col, ")"));
+            div.id = "".concat(i, "-").concat(j);
+            rowArr.push(div.id);
             mineArea.append(div);
         }
         boxes.push(rowArr);
     }
 };
-let minesPosition = [];
-const mineSetter = (col, row) => {
-    let mineCount = Math.floor(col * row * 0.15);
+var minesPosition = [];
+var mineSetter = function (col, row) {
+    var mineCount = Math.floor(col * row * 0.15);
     minesPosition = [];
-    for (let i = 0; i < mineCount; i++) {
-        let x = Math.floor(Math.random() * row).toString();
-        let y = Math.floor(Math.random() * col).toString();
-        let randomId = document.getElementById(`${x}-${y}`);
-        if (!minesPosition.includes(`${x}-${y}`)) {
-            minesPosition.push(`${x}-${y}`);
+    for (var i = 0; i < mineCount; i++) {
+        var x = Math.floor(Math.random() * row).toString();
+        var y = Math.floor(Math.random() * col).toString();
+        var randomId = document.getElementById("".concat(x, "-").concat(y));
+        if (!minesPosition.includes("".concat(x, "-").concat(y))) {
+            minesPosition.push("".concat(x, "-").concat(y));
             randomId.innerHTML = "&#128163;";
             randomId.style.color = "transparent";
         }
     }
-    for (let item of minesPosition) {
-        let splitId = item.split("-").map((item) => item);
-        let x = parseInt(splitId[0]);
-        let y = parseInt(splitId[1]);
-        let leftId = `${x}-${y - 1}`;
-        let topLeftId = `${x - 1}-${y - 1}`;
-        let bottomLeftId = `${x + 1}-${y - 1}`;
-        let topId = `${x - 1}-${y}`;
-        let bottomId = `${x + 1}-${y}`;
-        let topRightId = `${x - 1}-${y + 1}`;
-        let rightId = `${x}-${y + 1}`;
-        let bottomRightId = `${x + 1}-${y + 1}`;
-        // left side part
-        if (y > 0) {
+    for (var _i = 0, minesPosition_1 = minesPosition; _i < minesPosition_1.length; _i++) {
+        var item = minesPosition_1[_i];
+        var _a = item.split("-").map(Number), x = _a[0], y = _a[1];
+        var leftId = "".concat(x, "-").concat(y - 1);
+        var topLeftId = "".concat(x - 1, "-").concat(y - 1);
+        var bottomLeftId = "".concat(x + 1, "-").concat(y - 1);
+        var topId = "".concat(x - 1, "-").concat(y);
+        var bottomId = "".concat(x + 1, "-").concat(y);
+        var topRightId = "".concat(x - 1, "-").concat(y + 1);
+        var rightId = "".concat(x, "-").concat(y + 1);
+        var bottomRightId = "".concat(x + 1, "-").concat(y + 1);
+        if (y > 0)
             setNumber(leftId);
-        }
-        if (x > 0 && y > 0) {
+        if (x > 0 && y > 0)
             setNumber(topLeftId);
-        }
-        if (x < row - 1 && y > 0) {
+        if (x < row - 1 && y > 0)
             setNumber(bottomLeftId);
-        }
-        // middel part
-        if (x > 0) {
+        if (x > 0)
             setNumber(topId);
-        }
-        if (x < row - 1) {
+        if (x < row - 1)
             setNumber(bottomId);
-        }
-        // right side part
-        if (x > 0 && y < col - 1) {
+        if (x > 0 && y < col - 1)
             setNumber(topRightId);
-        }
-        if (y < col - 1) {
+        if (y < col - 1)
             setNumber(rightId);
-        }
-        if (x < row - 1 && y < col - 1) {
+        if (x < row - 1 && y < col - 1)
             setNumber(bottomRightId);
-        }
     }
 };
-const setNumber = (ids) => {
-    let id = document.getElementById(ids);
+var setNumber = function (ids) {
+    var id = document.getElementById(ids);
     if (id && !minesPosition.includes(ids)) {
-        id.innerText = (parseInt(document.getElementById(ids).innerText) || 0) + 1;
+        id.innerText = ((parseInt(id.innerText) || 0) + 1).toString();
         id.style.color = "transparent";
     }
 };
-const openPosition = (event, row, col) => {
-    let clickPosition = event.target.id;
+var openPosition = function (event, row, col) {
+    var clickPosition = event.target.id;
     if (minesPosition.includes(clickPosition)) {
-        for (let mine of minesPosition) {
-            let mineCell = document.getElementById(mine);
+        for (var _i = 0, minesPosition_2 = minesPosition; _i < minesPosition_2.length; _i++) {
+            var mine = minesPosition_2[_i];
+            var mineCell = document.getElementById(mine);
             mineCell.style.color = "black";
             mineCell.style.backgroundColor = "red";
             mineCell.innerHTML = "&#128163;";
         }
-        let allBoxes = document.querySelectorAll(".mineBtn");
-        allBoxes.forEach((item) => {
+        var allBoxes = document.querySelectorAll(".mineBtn");
+        allBoxes.forEach(function (item) {
             item.style.pointerEvents = "none";
         });
         alert("Game Over");
@@ -102,11 +91,9 @@ const openPosition = (event, row, col) => {
         winningCondition();
     }
 };
-const openEmptyBoxes = (id, row, col) => {
-    let emptyId = id.split("-");
-    let x = parseInt(emptyId[0]);
-    let y = parseInt(emptyId[1]);
-    let emptyBox = document.getElementById(id);
+var openEmptyBoxes = function (id, row, col) {
+    var _a = id.split("-").map(Number), x = _a[0], y = _a[1];
+    var emptyBox = document.getElementById(id);
     if (!emptyBox || emptyBox.style.backgroundColor === "lightgrey") {
         return;
     }
@@ -115,72 +102,61 @@ const openEmptyBoxes = (id, row, col) => {
     emptyBox.style.fontWeight = "bold";
     unopenedCells--;
     if (emptyBox.innerHTML === "") {
-        let leftId = `${x}-${y - 1}`;
-        let topLeftId = `${x - 1}-${y - 1}`;
-        let bottomLeftId = `${x + 1}-${y - 1}`;
-        let topId = `${x - 1}-${y}`;
-        let bottomId = `${x + 1}-${y}`;
-        let topRightId = `${x - 1}-${y + 1}`;
-        let rightId = `${x}-${y + 1}`;
-        let bottomRightId = `${x + 1}-${y + 1}`;
-        // left side part
-        if (y > 0) {
+        var leftId = "".concat(x, "-").concat(y - 1);
+        var topLeftId = "".concat(x - 1, "-").concat(y - 1);
+        var bottomLeftId = "".concat(x + 1, "-").concat(y - 1);
+        var topId = "".concat(x - 1, "-").concat(y);
+        var bottomId = "".concat(x + 1, "-").concat(y);
+        var topRightId = "".concat(x - 1, "-").concat(y + 1);
+        var rightId = "".concat(x, "-").concat(y + 1);
+        var bottomRightId = "".concat(x + 1, "-").concat(y + 1);
+        if (y > 0)
             openEmptyBoxes(leftId, row, col);
-        }
-        if (x > 0 && y > 0) {
+        if (x > 0 && y > 0)
             openEmptyBoxes(topLeftId, row, col);
-        }
-        if (x < row - 1 && y > 0) {
+        if (x < row - 1 && y > 0)
             openEmptyBoxes(bottomLeftId, row, col);
-        }
-        // middle part
-        if (x > 0) {
+        if (x > 0)
             openEmptyBoxes(topId, row, col);
-        }
-        if (x < row - 1) {
+        if (x < row - 1)
             openEmptyBoxes(bottomId, row, col);
-        }
-        // right side part
-        if (x > 0 && y < col - 1) {
+        if (x > 0 && y < col - 1)
             openEmptyBoxes(topRightId, row, col);
-        }
-        if (y < col - 1) {
+        if (y < col - 1)
             openEmptyBoxes(rightId, row, col);
-        }
-        if (x < row - 1 && y < col - 1) {
+        if (x < row - 1 && y < col - 1)
             openEmptyBoxes(bottomRightId, row, col);
-        }
     }
 };
-const winningCondition = () => {
+var winningCondition = function () {
     if (unopenedCells === minesPosition.length) {
         alert("Congratulations! You won");
-        document.querySelectorAll(".mineBtn").forEach((item) => {
+        document.querySelectorAll(".mineBtn").forEach(function (item) {
             item.style.pointerEvents = "none";
         });
     }
 };
-const selectBasic = () => {
-    let row = 10;
-    let col = 10;
+var selectBasic = function () {
+    var row = 10;
+    var col = 10;
     displayMineArea(col, row);
     mineSetter(col, row);
 };
-const selectIntermediate = () => {
-    let row = 16;
-    let col = 16;
+var selectIntermediate = function () {
+    var row = 16;
+    var col = 16;
     displayMineArea(col, row);
     mineSetter(col, row);
 };
-const selectExpert = () => {
-    let col = 30;
-    let row = 16;
+var selectExpert = function () {
+    var col = 30;
+    var row = 16;
     displayMineArea(col, row);
     mineSetter(col, row);
 };
-const customSelect = () => {
-    let row = parseInt(prompt("Enter the number of rows"));
-    let col = parseInt(prompt("Enter the number of columns"));
+var customSelect = function () {
+    var row = parseInt(prompt("Enter the number of rows") || "0");
+    var col = parseInt(prompt("Enter the number of columns") || "0");
     if (!row || !col) {
         selectBasic();
     }
@@ -189,7 +165,7 @@ const customSelect = () => {
         mineSetter(col, row);
     }
 };
-const ResetGame = () => {
+var ResetGame = function () {
     selectBasic();
 };
 selectBasic();
