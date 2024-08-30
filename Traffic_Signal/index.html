@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Traffic light</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+
+<body>
+  <div class="container">
+    <div class="title text-center">
+      <h1>Traffic Lights</h1>
+    </div>
+    <div class="userInput">
+      <label for="">Enter time in seconds : </label>
+      <input id="userInput" type="number" placeholder="e.x => 120" name="timer" id="totalTime" value="50" />
+      <div class="d-flex">
+        <div style="align-content: center">
+          <label for="">Traffic ratio</label>
+        </div>
+
+        <div class="d-flex ratioInputField">
+          <input type="number" placeholder="Enter ratio in percentage" id="1st" value="25"
+            class="traffic_ratio" /><br />
+          <input type="number" placeholder="Enter ratio in percentage" id="2nd" value="25"
+            class="traffic_ratio" /><br />
+          <input type="number" placeholder="Enter ratio in percentage" value="25" id="3rd"
+            class="traffic_ratio" /><br />
+          <input type="number" placeholder="Enter ratio in percentage" value="25" id="4th"
+            class="traffic_ratio" /><br />
+        </div>
+      </div>
+
+      <div class="center">
+        <button onclick="startTrafficLight()" class="startTime">Start</button>
+      </div>
+    </div>
+
+    <div class="center">
+      <div class="trafficSignals center">
+        <div>
+          <div class="timer">
+            <p class="text-center" id="timer">00</p>
+          </div>
+          <div class="red" id="red"></div>
+          <div class="yellow" id="yellow"></div>
+          <div class="green" id="green"></div>
+        </div>
+      </div>
+      <div class="trafficSignals center">
+        <div>
+          <div class="timer">
+            <p class="text-center" id="timer">00</p>
+          </div>
+          <div class="red" id="red"></div>
+          <div class="yellow" id="yellow"></div>
+          <div class="green" id="green"></div>
+        </div>
+      </div>
+      <div class="trafficSignals center">
+        <div>
+          <div class="timer">
+            <p class="text-center" id="timer">00</p>
+          </div>
+          <div class="red" id="red"></div>
+          <div class="yellow" id="yellow"></div>
+          <div class="green" id="green"></div>
+        </div>
+      </div>
+      <div class="trafficSignals center">
+        <div>
+          <div class="timer">
+            <p class="text-center" id="timer">00</p>
+          </div>
+          <div class="red" id="red"></div>
+          <div class="yellow" id="yellow"></div>
+          <div class="green" id="green"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="center">
+    <button onclick="stop()" class="stopBtn" disabled>stop</button>
+  </div>
+</body>
+
+<script src="./app.js"></script>
+
+
+</html>
